@@ -6,7 +6,7 @@ mixer.music.load('space.ogg')
 mixer.music.play()
 fire_sound = mixer.Sound('fire.ogg')
 #123
-
+#chelik bude strylyatu
 
 font.init()
 font1 = font.SysFont('Arial', 40)
@@ -24,6 +24,10 @@ lost = 0
 goal = 10
 max_lost = 3
 life = 3
+player_left = False
+player_right = False
+player_up = False
+player_down = False
 class GameSprite(sprite.Sprite):
     def __init__(self, sprite_img, sprite_x, sprite_y, size_x, sixe_y , sprite_speed):
         super().__init__()
@@ -41,8 +45,17 @@ class Player(GameSprite):
         keys = key.get_pressed()
         if keys[K_LEFT] and self.rect.x > 5:
             self.rect.x -= self.speed
+            player_left = True
         if keys[K_RIGHT] and self.rect.x < win_width - 80:
             self.rect.x += self.speed
+            player_right = True
+        if keys[K_UP] and self.rect.y < win_height - 80:
+            self.rect.y -= self.speed
+            player_up = True
+        if keys[K_DOWN] and self.rect.y < win_height - 80:
+            self.rect.y += self.speed
+            player_down = True
+
     def fire(self):
         bullet = Bullet("bullet.png", self.rect.centerx, self.rect.top, 15, 20, -15)
         bullets.add(bullet)
