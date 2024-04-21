@@ -5,6 +5,8 @@ mixer.init()
 mixer.music.load('space.ogg')
 mixer.music.play()
 fire_sound = mixer.Sound('fire.ogg')
+#123
+
 
 font.init()
 font1 = font.SysFont('Arial', 40)
