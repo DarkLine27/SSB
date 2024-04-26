@@ -15,13 +15,14 @@ win = font2.render('YOU WIN!', True, (255, 255, 255))
 lose = font2.render('YOU LOSE!', True, (180, 0, 0))
 
 
-img_back = "background.jpg"
-img_hero = "rocket.png"
-img_enemy = "ufo.jpg"
+img_back = "background.png"
+
+img_hero = "verhsteve.png"
+img_enemy = "zombieverh.png"
 img_asteroid = 'chel.jpg'
-score = 0
+
 lost = 0
-goal = 10
+kil=0
 max_lost = 3
 life = 3
 player_left = False
@@ -101,26 +102,32 @@ reload_time = False
 num_fire = 0
 clock = time.Clock()
 FPS = 30
+m=25
 
 while run:
     for e in event.get():
+        
         if e.type == QUIT:
             run = False
         elif e.type == KEYDOWN and not finish: ###
             if e.key == K_SPACE:
-                if num_fire < 10 and reload_time ==  False:
+                if num_fire < 25 and reload_time ==  False:
                     num_fire +=1
-                    fire_sound.play()
-                    ship.fire()
-                if num_fire >= 10 and reload_time == False :
+                    kil=m-num_fire
+                    
+                    #fire_sound.play()
+                    ship.fire() 
+                if num_fire >= 25 and reload_time == False :
                     last_time = timer()
                     reload_time = True
 
     if not finish:
+        
+        real_timer = timer()
         window.blit(background, (0, 0))
 
-        text = font1.render("Рахунок: " + str(score),1, (255,255,255))
-        window.blit(text,(10, 20))
+        text_ammo = font1.render(str(kil)+'/'+str(m),1,(255,255,255))
+        window.blit(text_ammo, (650, 30))
 
         text_lose = font1.render("Пропущенно: " + str(lost),1, (255, 255, 255))
         window.blit(text_lose, (10, 50))
@@ -138,18 +145,17 @@ while run:
 
         if reload_time == True:
             now_time = timer()
-            if now_time - reload_time > 2:
+            if now_time - last_time < 2:
                 reload = font2.render('Wait for reload', 1, (150,0,0))
                 window.blit(reload,(win_width/2-200, win_height-100))
             else:
                 num_fire = 0
-                reload_time = 0
+                reload_time = False
 
         # перевірка зіткнення кулі та монстрів (і монстр, і куля при зіткненні зникають)
         collides = sprite.groupcollide(monsters, bullets, True, True)
         for collide in collides:
             # цей цикл повториться стільки разів, скільки монстрів збито
-            score = score + 1
             monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 3))
             monsters.add(monster)
 
@@ -169,10 +175,12 @@ while run:
         if lost > max_lost or life == 0:
             finish = True
             window.blit(lose, (200, 200))
-
-        if score >= goal:
-            finish = True
-            window.blit(win, (200, 200))
+        if not finish:
+            now_time= timer()
+            if now_time-real_timer > 300:
+                win = font1.render("Вітаю з перемогою!",1,(0,255,50))
+                window.blit(win,(win_width/2-200, win_height-100))
+ 
 
         display.update()
 
