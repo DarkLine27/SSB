@@ -11,11 +11,12 @@ from time import time as timer
 font.init()
 font1 = font.SysFont('Arial', 40)
 font2 = font.SysFont('Arial', 80)
-win = font2.render('YOU WIN!', True, (255, 255, 255))
-lose = font2.render('YOU LOSE!', True, (180, 0, 0))
 
+lose = font2.render('YOU LOSE!', True, (180, 0, 0))
+real_timer = timer()
 
 img_back = "background.png"
+win= image.load("win.png")
 
 img_hero = "verhsteve.png"
 img_enemy = "zombieverh.png"
@@ -78,9 +79,22 @@ class Bullet(GameSprite):
         # зникає, якщо дійде до краю екрана
         if self.rect.y < 0:
             self.kill()
+class Wall(sprite.Sprite):
+    def __init__(self, color_1, color_2, color_3, wall_x, wall_y, wall_width, wall_height):
+        # картинка стіни - прямокутник потрібних розмірів та кольору
+        self.image = Surface((wall_width, wall_height))
+        self.image.fill((color_1, color_2, color_3))
+        # кожен спрайт повинен зберігати властивість rect - прямокутник
+        self.rect = self.image.get_rect()
+        self.rect.x = wall_x
+        self.rect.y = wall_y
 
-win_width = 700
-win_height = 500
+    def draw_wall(self):
+        window.blit(self.image, (self.rect.x, self.rect.y))
+
+
+win_width = 800
+win_height = 800
 window = display.set_mode((win_width, win_height))
 display.set_caption("Shooter")
 background = transform.scale(image.load(img_back), (win_width, win_height))
@@ -89,10 +103,10 @@ ship = Player(img_hero, 5, win_height - 100, 80, 100, 10)
 
 bullets = sprite.Group()
 monsters = sprite.Group()
-
+w1 = Wall(0, 205, 0, 0, 650, 800, 10)
 
 for i in range(1, 6):
-    monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 3))
+    monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 60, 50, randint(1, 3))
     monsters.add(monster)
 
 
@@ -121,13 +135,19 @@ while run:
                     last_time = timer()
                     reload_time = True
 
-    if not finish:
-        
-        real_timer = timer()
+
+    if not finish: 
+
+        if sprite.spritecollide(ship, monsters, False):  
+            sprite.spritecollide(ship, monsters, True)
+            monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 3))
+            monsters.add(monster)
+            life -=3
+
         window.blit(background, (0, 0))
 
-        text_ammo = font1.render(str(kil)+'/'+str(m),1,(255,255,255))
-        window.blit(text_ammo, (650, 30))
+        text_ammo = font1.render(str(kil)+'/'+str(m),1,(0,200,100))
+        window.blit(text_ammo, (610, 50))
 
         text_lose = font1.render("Пропущенно: " + str(lost),1, (255, 255, 255))
         window.blit(text_lose, (10, 50))
@@ -137,11 +157,10 @@ while run:
         ship.update()
         monsters.update()
         bullets.update()
-
+        w1.draw_wall()
         ship.reset()
         monsters.draw(window)
         bullets.draw(window)
-
 
         if reload_time == True:
             now_time = timer()
@@ -151,7 +170,6 @@ while run:
             else:
                 num_fire = 0
                 reload_time = False
-
         # перевірка зіткнення кулі та монстрів (і монстр, і куля при зіткненні зникають)
         collides = sprite.groupcollide(monsters, bullets, True, True)
         for collide in collides:
@@ -159,29 +177,27 @@ while run:
             monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 3))
             monsters.add(monster)
 
-
         # можливий програш: пропустили занадто багато або герой зіткнувся з ворогом
         #if sprite.spritecollide(ship, monsters, False) or lost > max_lost:
          #   finish = True # програли, ставимо тло і більше не керуємо спрайтами.
           #  window.blit(lose, (200, 200))
 
-        if sprite.spritecollide(ship, monsters, False):  
-            sprite.spritecollide(ship, monsters, True)
-            monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 3))
-            monsters.add(monster)
-            life -=1
+        
 
             
-        if lost > max_lost or life == 0:
+        if lost > max_lost or life <= 0:
             finish = True
-            window.blit(lose, (200, 200))
-        if not finish:
-            now_time= timer()
-            if now_time-real_timer > 300:
-                win = font1.render("Вітаю з перемогою!",1,(0,255,50))
-                window.blit(win,(win_width/2-200, win_height-100))
- 
+            window.blit(lose, (0,0))
+        # if finish:
+        #     win = font1.render("Вітаю з перемогою!",1,(0,255,50))
+        #     window.blit(win,(win_width/2-200, win_height-100))
+        no_time= timer()
+
+        if no_time-real_timer > 10:
+                finish = True
+                window.blit(win,(0,0))
 
         display.update()
 
-    clock.tick(FPS)
+    clock.tick(FPS)  
+    
