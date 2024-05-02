@@ -155,8 +155,8 @@ while run:
         text_ammo = font1.render(str(kil)+'/'+str(m),1,(0,200,100))
         window.blit(text_ammo, (610, 50))
 
-        text_lose = font1.render("Пропущенно: " + str(lost),1, (255, 255, 255))
-        window.blit(text_lose, (10, 50))
+        #text_lose = font1.render("Пропущенно: " + str(lost),1, (255, 255, 255))
+        #window.blit(text_lose, (10, 50))
 
         text_life = font1.render(str(life), 1, (0, 150, 0))
         window.blit(text_life, (650, 10))
