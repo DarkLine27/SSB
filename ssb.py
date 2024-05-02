@@ -149,7 +149,7 @@ while run:
             monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 60, 60, randint(1, 3))
             monsters.add(monster)
             life -=1
-
+        w1.draw_wall()
         window.blit(background, (0, 0))
 
         text_ammo = font1.render(str(kil)+'/'+str(m),1,(0,200,100))
@@ -163,11 +163,11 @@ while run:
         ship.update()
         monsters.update()
         bullets.update()
-        w1.draw_wall()
+        
         ship.reset()
         monsters.draw(window)
         bullets.draw(window)
-
+        
         if reload_time == True:
             now_time = timer()
             if now_time - last_time < 2:
@@ -199,7 +199,7 @@ while run:
         #     window.blit(win,(win_width/2-200, win_height-100))
         no_time= timer()
 
-        if no_time-real_timer > 10:
+        if no_time-real_timer > 100:
                 finish = True
                 window.blit(win,(0,0))
 
