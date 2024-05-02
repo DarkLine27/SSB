@@ -1,27 +1,27 @@
 from pygame import *
 from random import randint
 from time import time as timer
+
 #mixer.init()
 #mixer.music.load('space.ogg')
 #mixer.music.play()
 #fire_sound = mixer.Sound('fire.ogg')
 #123
 #chelik bude strylyatu
-
 font.init()
 font1 = font.SysFont('Arial', 40)
 font2 = font.SysFont('Arial', 80)
 
-lose = font2.render('YOU LOSE!', True, (180, 0, 0))
+
 real_timer = timer()
 
 img_back = "background.png"
 win= image.load("win.png")
+lose= image.load('Loser.png')
 
 img_hero = "verhsteve.png"
 img_enemy = "zombieverh.png"
 img_asteroid = 'chel.jpg'
-
 lost = 0
 kil=0
 max_lost = 3
@@ -31,9 +31,9 @@ player_right = False
 player_up = False
 player_down = False
 class GameSprite(sprite.Sprite):
-    def __init__(self, sprite_img, sprite_x, sprite_y, size_x, sixe_y , sprite_speed):
+    def __init__(self, sprite_img, sprite_x, sprite_y, size_x, size_y , sprite_speed):
         super().__init__()
-        self.image = transform.scale(image.load(sprite_img),(size_x, sixe_y))
+        self.image = transform.scale(image.load(sprite_img),(size_x, size_y))
         self.speed = sprite_speed
         self.rect = self.image.get_rect()
         self.rect.x = sprite_x
@@ -45,16 +45,16 @@ class GameSprite(sprite.Sprite):
 class Player(GameSprite):
     def update(self):
         keys = key.get_pressed()
-        if keys[K_LEFT] and self.rect.x > 5:
+        if keys[K_a] and self.rect.x > 5:
             self.rect.x -= self.speed
             player_left = True
-        if keys[K_RIGHT] and self.rect.x < win_width - 80:
+        if keys[K_d] and self.rect.x < win_width - 80:
             self.rect.x += self.speed
             player_right = True
-        if keys[K_UP] and self.rect.y < win_height - 80:
+        if keys[K_w] and self.rect.y < win_height - 80:
             self.rect.y -= self.speed
             player_up = True
-        if keys[K_DOWN] and self.rect.y < win_height - 80:
+        if keys[K_s] and self.rect.y < win_height - 80:
             self.rect.y += self.speed
             player_down = True
 
@@ -105,8 +105,8 @@ bullets = sprite.Group()
 monsters = sprite.Group()
 w1 = Wall(0, 205, 0, 0, 650, 800, 10)
 
-for i in range(1, 6):
-    monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 60, 50, randint(1, 3))
+for i in range(1, 10):
+    monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 60, 60, randint(1, 3))
     monsters.add(monster)
 
 
@@ -140,9 +140,15 @@ while run:
 
         if sprite.spritecollide(ship, monsters, False):  
             sprite.spritecollide(ship, monsters, True)
-            monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 3))
+            monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 60, 60, randint(1, 3))
             monsters.add(monster)
             life -=3
+
+        if sprite.spritecollide(w1, monsters, False):
+            sprite.spritecollide(w1, monsters, True)
+            monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 60, 60, randint(1, 3))
+            monsters.add(monster)
+            life -=1
 
         window.blit(background, (0, 0))
 
@@ -174,7 +180,7 @@ while run:
         collides = sprite.groupcollide(monsters, bullets, True, True)
         for collide in collides:
             # цей цикл повториться стільки разів, скільки монстрів збито
-            monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 80, 50, randint(1, 3))
+            monster = Enemy(img_enemy, randint(80, win_width - 80), -40, 60, 60, randint(1, 3))
             monsters.add(monster)
 
         # можливий програш: пропустили занадто багато або герой зіткнувся з ворогом
