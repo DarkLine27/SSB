@@ -51,12 +51,6 @@ class Player(GameSprite):
         if keys[K_d] and self.rect.x < win_width - 80:
             self.rect.x += self.speed
             player_right = True
-        if keys[K_w] and self.rect.y < win_height - 80:
-            self.rect.y -= self.speed
-            player_up = True
-        if keys[K_s] and self.rect.y < win_height - 80:
-            self.rect.y += self.speed
-            player_down = True
 
     def fire(self):
         bullet = Bullet("bullet.png", self.rect.centerx, self.rect.top, 15, 20, -15)
